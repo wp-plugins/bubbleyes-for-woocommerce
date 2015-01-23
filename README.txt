@@ -2,7 +2,7 @@
 Contributors: hjvedvik
 Tags: ecommerce, e-commerce, commerce, woocommerce, woothemes, store, sales, customer, push, notification, sell, shop, shopping, share, social, bubbleyes
 Requires at least: 3.8
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
