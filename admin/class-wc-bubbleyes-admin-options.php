@@ -29,7 +29,11 @@ class WC_Bubbleyes_Admin_Options
 	{
 		WC_Bubbleyes()->loader()->add_action( 'admin_menu', $this, 'add_options_page' );
 		WC_Bubbleyes()->loader()->add_action( 'admin_init', $this, 'register_options' );
-		WC_Bubbleyes()->loader()->add_action( 'pre_update_option_bubbleyes', $this, 'on_options_update', 10, 2 );
+
+		WC_Bubbleyes()->loader()->add_filter( 'pre_update_option_bubbleyes', $this, 'pre_options_update', 10, 2 );
+		WC_Bubbleyes()->loader()->add_action( 'added_option', $this, 'options_added', 10, 2 );
+		WC_Bubbleyes()->loader()->add_action( 'updated_option', $this, 'options_updated', 10, 3 );
+
 		WC_Bubbleyes()->loader()->add_action( 'admin_post_bubbleyes_sync', $this, 'sync_all_products' );
 		WC_Bubbleyes()->loader()->add_action( 'admin_notices', $this, 'admin_notices' );
 		WC_Bubbleyes()->loader()->add_action( 'admin_enqueue_scripts', $this, 'enqueue_styles' );
@@ -116,9 +120,14 @@ class WC_Bubbleyes_Admin_Options
 	 * @param   array  $options
 	 * @param   array  $options_old
 	 */
-	public function on_options_update( $options, $options_old )
+	public function pre_options_update( $options, $options_old )
 	{
-		if( $options['apikey'] == $options_old['apikey'] && ! isset( $_POST['resync'] ) ) {
+		if( isset( $_POST['resync'] ) ) {
+			$this->sync_all_products();
+			return $options;
+		}
+
+		if( ! empty( $options_old ) && $options['apikey'] == $options_old['apikey'] ) {
 			return $options;
 		}
 
@@ -140,10 +149,31 @@ class WC_Bubbleyes_Admin_Options
 			'updated'
 		);
 
+		return $options;
+	}
+
+	public function options_added( $option, $options )
+	{
+		if( $option != 'bubbleyes' ) return;
+
+		$this->sync_all_products();
+	}
+
+	public function options_updated( $option, $options_old, $options )
+	{
+		if( $option != 'bubbleyes' ) return;
+
+		if( ! empty( $options_old ) && $options['apikey'] == $options_old['apikey'] ) {
+			return;
+		}
+
+		$this->sync_all_products();
+	}
+
+	protected function sync_all_products()
+	{
 		$sync = new WC_Bubbleyes_Products_Synchronizer();
 		$sync->sync_all_products();
-
-		return $options;
 	}
 
 	/**
