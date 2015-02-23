@@ -69,7 +69,7 @@ final class WC_Bubbleyes
 	public function __construct()
 	{
 		$this->identifier = 'woocommerce-bubbleyes';
-		$this->version    = '1.0.0';
+		$this->version    = '1.0.2';
 
 		$default_options = array(
 			'version' => $this->version,

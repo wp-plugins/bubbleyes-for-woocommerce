@@ -47,7 +47,7 @@ class WC_Bubbleyes_Admin_Category
 	public function category_edit_form( $taxonomy )
 	{
 		$meta = get_metadata( 'taxonomy', $taxonomy->term_id, '_bubbleyes_meta', true );
-		$category = isset( $meta['category'] ) ? $meta['category'] : '';
+		$category = $meta && isset( $meta['category'] ) ? $meta['category'] : '';
 		include plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/category-edit-form.php';
 	}
 
@@ -61,7 +61,7 @@ class WC_Bubbleyes_Admin_Category
 		$old_meta = get_metadata( 'taxonomy', $term_id, '_bubbleyes_meta', true );
 		$new_meta = array( 'category' => $_POST['bubbleyes_category'] );
 
-		if( $old_meta['category'] == $new_meta['category'] ) {
+		if( $old_meta && isset( $old_meta['category'] ) && $old_meta['category'] == $new_meta['category'] ) {
 			return;
 		}
 
