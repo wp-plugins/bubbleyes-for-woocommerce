@@ -33,8 +33,8 @@ class WC_Bubbleyes_Cron
 	 */
 	public function import_all_products()
 	{
-		$sync = new WC_Bubbleyes_Products_Synchronizer();
-		$sync->import_all_products( false );
+		// $sync = new WC_Bubbleyes_Products_Synchronizer();
+		// $sync->import_all_products( false );
 	}
 
 	/**

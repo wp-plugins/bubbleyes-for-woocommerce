@@ -102,19 +102,8 @@ class WC_Bubbleyes_Admin_Product
 			return;
 		}
 
-		/**
-		 * Synchronize product meta. Delete the
-		 * product in Bubbleyes Platform if it is
-		 * deactivated.
-		 */
-		$meta = get_post_meta( $post_id, '_bubbleyes_meta', true );
 		$synchronizer = new WC_Bubbleyes_Products_Synchronizer();
-		
-		if( $meta['active'] ) {
-			$synchronizer->sync_product( $post_id );
-		} else {
-			$synchronizer->delete_product( $post_id );
-		}
+		$synchronizer->sync_product( $post_id );
 	}
 
 	public function delete_product( $post_id )

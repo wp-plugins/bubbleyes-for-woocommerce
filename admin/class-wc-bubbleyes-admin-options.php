@@ -38,6 +38,9 @@ class WC_Bubbleyes_Admin_Options
 		WC_Bubbleyes()->loader()->add_action( 'admin_notices', $this, 'admin_notices' );
 		WC_Bubbleyes()->loader()->add_action( 'admin_enqueue_scripts', $this, 'enqueue_styles' );
 		WC_Bubbleyes()->loader()->add_action( 'admin_enqueue_scripts', $this, 'enqueue_scripts' );
+
+		WC_Bubbleyes()->loader()->add_action( 'wp_ajax_bubbleyes_batch_start', $this, 'batch_start' );
+		WC_Bubbleyes()->loader()->add_action( 'wp_ajax_bubbleyes_batch_sync', $this, 'batch_sync' );
 	}
 
 	/**
@@ -122,8 +125,8 @@ class WC_Bubbleyes_Admin_Options
 	 */
 	public function pre_options_update( $options, $options_old )
 	{
-		if( isset( $_POST['resync'] ) ) {
-			$this->sync_all_products();
+		if( isset( $_POST['bubbleyes-resync'] ) ) {
+			// $this->sync_all_products();
 			return $options;
 		}
 
@@ -139,13 +142,19 @@ class WC_Bubbleyes_Admin_Options
 				'error'
 			);
 			$options['apikey'] = $options_old['apikey'];
+
+			if ( ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) == 'xmlhttprequest' ) {
+				echo 'error';
+				die;
+			}
+
 			return $options;
 		}
 
 		add_settings_error(
 			'bubbleyes_message',
 			esc_attr( 'settings_updated' ),
-			__( 'Settings saved. All products are being synchronized now.' ),
+			__( 'Settings saved.' ),
 			'updated'
 		);
 
@@ -156,7 +165,7 @@ class WC_Bubbleyes_Admin_Options
 	{
 		if( $option != 'bubbleyes' ) return;
 
-		$this->sync_all_products();
+		// $this->sync_all_products();
 	}
 
 	public function options_updated( $option, $options_old, $options )
@@ -167,8 +176,66 @@ class WC_Bubbleyes_Admin_Options
 			return;
 		}
 
-		$this->sync_all_products();
+		// $this->sync_all_products();
 	}
+
+	/**
+	 * @since 1.0.4
+	 */
+	public function batch_start()
+	{
+		// Create a transient to collect failed products.
+		set_transient( 'bubbleyes_failed_products', array(), 3600 );
+
+		$sync = new WC_Bubbleyes_Products_Synchronizer();
+		$sync->clear_all_products();
+		$this->batch_sync();
+	}
+
+	/**
+	 * @since 1.0.4
+	 */
+	public function batch_sync()
+	{
+		$sync = new WC_Bubbleyes_Products_Synchronizer();
+
+		$chunk_size = (int) $_GET['chunk_size'];
+		$start_at   = (int) $_GET['start_at'];
+
+		$query = new WP_Query( array(
+			'posts_per_page' => $chunk_size,
+			'offset' => $start_at,
+			'post_type' => 'product',
+		) );
+
+		$posts = $query->get_posts();
+		$total = $query->found_posts;
+
+		if( empty( $posts ) ) {
+			$failed = get_transient( 'bubbleyes_failed_products' );
+			echo json_encode( array( 'done' => true, 'failed' => $failed ), JSON_NUMERIC_CHECK );
+			delete_transient( 'bubbleyes_failed_products' );
+			die;
+		}
+
+		$response = $sync->import_products( $posts, true );
+
+		$data = array(
+			'done'     => false,
+			'startAt'  => $start_at + $chunk_size,
+			'total'    => $query->found_posts,
+			'response' => $response,
+		);
+
+		if( ! empty( $response ) ) {
+			$data['error'] = true;
+			$data['errorMessage'] = $response['Message'];
+		}
+
+		echo json_encode( $data, JSON_NUMERIC_CHECK );
+		die;
+	}
+
 
 	protected function sync_all_products()
 	{
@@ -226,7 +293,7 @@ class WC_Bubbleyes_Admin_Options
 		$screen = get_current_screen();
 
 		if ( $this->plugin_options_page == $screen->id ) {
-			wp_enqueue_script( $identifier, plugin_dir_url( __FILE__ ) . 'js/bubbleyes.js', array( 'jquery' ), $version, false );
+			wp_enqueue_script( $identifier, plugin_dir_url( __FILE__ ) . 'js/bubbleyes.js', array( 'jquery', 'jquery-form' ), $version, false );
 		}
 	}
 }

@@ -19,12 +19,12 @@ class WC_Bubbleyes_Admin
 	 */
 	public function __construct()
 	{
-		$batch_process = new WC_Bubbleyes_Batch_Process();
+		// $batch_process = new WC_Bubbleyes_Batch_Process();
 		$admin_options = new WC_Bubbleyes_Admin_Options();
 		$admin_product = new WC_Bubbleyes_Admin_Product();
 		$admin_metabox = new WC_Bubbleyes_Admin_Category();
 
-		WC_Bubbleyes()->loader()->add_action( 'wp_ajax_bubbleyes_batch_import', $batch_process, 'process' );
-		WC_Bubbleyes()->loader()->add_action( 'wp_ajax_nopriv_bubbleyes_batch_import', $batch_process, 'process' );
+		// WC_Bubbleyes()->loader()->add_action( 'wp_ajax_bubbleyes_batch_import', $batch_process, 'process' );
+		// WC_Bubbleyes()->loader()->add_action( 'wp_ajax_nopriv_bubbleyes_batch_import', $batch_process, 'process' );
 	}
 }

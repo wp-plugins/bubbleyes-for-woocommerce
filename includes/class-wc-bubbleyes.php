@@ -69,23 +69,46 @@ final class WC_Bubbleyes
 	public function __construct()
 	{
 		$this->identifier = 'woocommerce-bubbleyes';
-		$this->version    = '1.0.2';
+		$this->version    = '1.0.3';
 
 		$default_options = array(
-			'version' => $this->version,
 			'apikey' => null,
+			'version' => '1.0.0',
 			'button_layout' => 'long',
 			'button_position' => 'share',
 		);
 
 		// Load options and ensure there are
 		// some options available.
-		$this->options = get_option( 'bubbleyes', $default_options );
-		if( empty( $this->options ) ) {
-			$this->options = $default_options;
-		}
+		$this->options = wp_parse_args( get_option( 'bubbleyes', array() ), $default_options );
 
 		$this->load_dependencies();
+
+		if( $this->needs_migration() ) {
+			$this->load_migration();
+		}
+	}
+
+	//
+	// Migration
+	//
+
+	private function needs_migration()
+	{
+		return version_compare( $this->options['version'], $this->version, '<' );
+	}
+
+	private function load_migration()
+	{
+		$name = str_replace( '.', '-', $this->version ) . '.php';
+		$file = plugin_dir_path( dirname( __FILE__ ) ) . 'migrations/' . $name;
+
+		if( file_exists( $file ) ) {
+			include $file;
+		}
+
+		$this->options['version'] = $this->version;
+		update_option( 'bubbleyes', $this->options );
 	}
 
 	/**
@@ -134,7 +157,7 @@ final class WC_Bubbleyes
 		/**
 		 * Classes for Bubbleyes API intergration.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-bubbleyes-batch-process.php';
+		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-bubbleyes-batch-process.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wc-bubbleyes-products-synchronizer.php';
 	}
 

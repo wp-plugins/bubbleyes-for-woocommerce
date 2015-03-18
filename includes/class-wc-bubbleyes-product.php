@@ -12,6 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class WC_Bubbleyes_Product
 {
 	/**
+	 * Invalid product
+	 * 
+	 * @var  boolean
+	 */
+	private $is_valid = true;
+
+	/**
 	 * The post ID.
 	 * 
 	 * @var  int
@@ -35,6 +42,29 @@ class WC_Bubbleyes_Product
 	private $meta = array();
 
 	public function __construct( $post_id )
+	{
+		try {
+
+			@$this->get_data( $post_id );
+
+		} catch (Exception $e) {
+
+			$failed = get_transient( 'bubbleyes_failed_products' );
+
+			$failed[] = array(
+				'sku' => $this->get_sku(),
+				'name' => $this->get_name(),
+				'message' => $e->getMessage()
+			);
+
+			set_transient( 'bubbleyes_failed_products', $failed, 3600 );
+
+			$this->is_valid = false;
+			
+		}
+	}
+
+	protected function get_data( $post_id )
 	{
 		$this->post_id  = $post_id;
 		$this->product  = get_product( $post_id );
@@ -78,6 +108,7 @@ class WC_Bubbleyes_Product
 		// Get price.
 		$price = $this->product->get_regular_price();
 		$variation = null;
+
 		if( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.2.0') > 0 ) {
 			if( ! $price ) {
 				$variations = $this->product->get_available_variations();
@@ -102,6 +133,7 @@ class WC_Bubbleyes_Product
 
 		// Let other plugins modify meta data if necessary.
 		$this->meta['Product'] = apply_filters( 'bubbleyes_product_meta', $this->meta['Product'], $this->product );
+		
 	}
 
 	/**
@@ -112,16 +144,6 @@ class WC_Bubbleyes_Product
 	 */
 	public function should_sync()
 	{
-		// Do not sync inactive products.
-		if( ! $this->meta['active'] ) {
-			return false;
-		}
-
-		// Do not sync if currency is not supported.
-		// if( ! array_key_exists( $this->meta['Product']['Currency'], wc_bubbleyes_currencies() ) ) {
-		//	 return false;
-		// }
-
 		$should_sync = false;
 
 		// Synchronize if old meta data did not have
@@ -146,6 +168,15 @@ class WC_Bubbleyes_Product
 		}
 
 		return $should_sync;
+	}
+
+	/**
+	 * Check if this product is valid
+	 * @return  boolean  [description]
+	 */
+	public function is_valid()
+	{
+		return $this->is_valid;
 	}
 
 	/**
@@ -229,6 +260,10 @@ class WC_Bubbleyes_Product
 	public function set_price( $price )
 	{
 		$this->meta['Product']['Price'] = $this->format_price( $price );
+		if( ! is_numeric( $this->meta['Product']['Price'] ) ) {
+			throw new Exception('The price is not a valid number.', 1);
+			$this->meta['Product']['Price'] = null;
+		}
 	}
 
 	/**
@@ -238,6 +273,10 @@ class WC_Bubbleyes_Product
 	{
 		if( $price == 0 || $price == '0.00' ) return;
 		$this->meta['Product']['DiscountedPrice'] = $this->format_price( $price );
+		if( ! is_numeric( $this->meta['Product']['DiscountedPrice'] ) ) {
+			throw new Exception('The discounted price is not a valid number.', 1);
+			$this->meta['Product']['DiscountedPrice'] = null;
+		}
 	}
 
 	/**

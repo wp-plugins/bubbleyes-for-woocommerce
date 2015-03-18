@@ -93,7 +93,7 @@ class WC_Bubbleyes_Products_Synchronizer
 	 * @param   array  $posts  All posts thats going to be synchronized.
 	 * @return  bool
 	 */
-	public function import_products( $posts )
+	public function import_products( $posts, $with_response = false )
 	{
 		$products = array();
 
@@ -101,9 +101,15 @@ class WC_Bubbleyes_Products_Synchronizer
 			$products[] = new WC_Bubbleyes_Product( $post->ID );
 		}
 
-		$response = $this->api->call( WC_Bubbleyes_API::IMPORT_PRODUCTS, array(
-			'ProductsXML' => $this->to_xml( $products )
-		));
+		if( $with_response ) {
+			$response = $this->api->callWithResponse( WC_Bubbleyes_API::IMPORT_PRODUCTS, array(
+				'ProductsXML' => $this->to_xml( $products )
+			));
+		} else {
+			$response = $this->api->call( WC_Bubbleyes_API::IMPORT_PRODUCTS, array(
+				'ProductsXML' => $this->to_xml( $products )
+			));
+		}
 
 		if( $response ) {
 			foreach ($products as $product) {
@@ -152,6 +158,9 @@ class WC_Bubbleyes_Products_Synchronizer
 		$products_xml = new SimpleXMLElement('<products/>');
 
 		foreach ($products as $product) {
+
+			if( ! $product->is_valid() ) continue;
+
 			$product_xml = $products_xml->addChild('product');
 			$product_xml->addAttribute('sku', esc_attr( $product->get_sku()) );
 			$product_xml->addChild('name', esc_attr( $product->get_name()) );
