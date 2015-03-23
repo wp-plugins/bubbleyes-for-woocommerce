@@ -26,11 +26,12 @@ class WC_Bubbleyes_Button {
 	{
 		global $post;
 
-		$meta = get_post_meta( $post->ID, '_bubbleyes_meta', true );
+		if( ! isset( $post ) ) return;
 
-		if( empty( $meta ) ) {
-			return;
-		}
+		// $meta = get_post_meta( $post->ID, '_bubbleyes_meta', true );
+		// if( empty( $meta ) ) {
+		// 	return;
+		// }
 
 		include plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/button.php';
 	}

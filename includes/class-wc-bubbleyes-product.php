@@ -146,6 +146,10 @@ class WC_Bubbleyes_Product
 	{
 		$should_sync = false;
 
+		if( empty( $this->meta_old ) ) {
+			return true;
+		}
+
 		// Synchronize if old meta data did not have
 		// the the same as the new meta or if any
 		// have changed since last sync.
