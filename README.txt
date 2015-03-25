@@ -37,7 +37,7 @@ Bubbleyes is a solid campaign management tool allowing online stores to view the
 
 == Installation ==
 
-1. Create a Bubbleyes account at [bubbleyes.com](http://bubbleyes.com/).
+1. Create a Bubbleyes account at [bubbleyes.com](http://admin.bubbleyes.com/Account).
 2. Upon registration you will be able to log in to the [Bubbleyes Client Platform](http://admin.bubbleyes.com/). In your profile there you can access the API key needed in the plugin configuration.
 3. Upload `bubbleyes-for-woocommerce` to the `/wp-content/plugins/` directory
 4. Activate the plugin through the 'Plugins' menu in WordPress
