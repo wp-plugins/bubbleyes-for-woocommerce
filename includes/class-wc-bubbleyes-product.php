@@ -254,8 +254,7 @@ class WC_Bubbleyes_Product
 	 */
 	public function set_description( $description )
 	{
-		$stripped = wp_strip_all_tags( apply_filters( 'woocommerce_short_description', $description ) );
-		$this->meta['Product']['Description'] = preg_replace(array('/\r/', '/\n/', '/&nbsp;/'), ' ', $stripped);
+		$this->meta['Product']['Description'] = (string) wp_strip_all_tags( $description );
 	}
 
 	/**

@@ -155,19 +155,87 @@ class WC_Bubbleyes_Products_Synchronizer
 	 */
 	private function to_xml( $products )
 	{
+		return class_exists( 'DOMDocument' ) ? $this->dom_xml( $products ) : $this->simple_xml( $products );
+	}
+
+	private function dom_xml( $products )
+	{
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+
+		$root = $doc->createElement( 'products' );
+		$root = $doc->appendChild( $root );
+
+		foreach ($products as $product) {
+
+			if( ! $product->is_valid() ) continue;
+
+			$prod = $doc->createElement( 'product' );
+
+			$sku = $doc->createAttribute( 'sku' );
+			$sku->value = $product->get_sku();
+
+			$name        = $doc->createElement( 'name' );
+			$shopurl     = $doc->createElement( 'shopurl' );
+			$price       = $doc->createElement( 'price' );
+			$currency    = $doc->createElement( 'currency' );
+			$description = $doc->createElement( 'description' );
+			$image       = $doc->createElement( 'image' );
+			$active      = $doc->createElement( 'active' );
+
+			$name        ->appendChild( $doc->createTextNode( $product->get_name() ) );
+			$shopurl     ->appendChild( $doc->createTextNode( $product->get_permalink() ) );
+			$price       ->appendChild( $doc->createTextNode( $product->get_price() ) );
+			$currency    ->appendChild( $doc->createTextNode( $product->get_currency() ) );
+			$description ->appendChild( $doc->createTextNode( $product->get_description() ) );
+			$image       ->appendChild( $doc->createTextNode( $product->get_image() ) );
+			$active      ->appendChild( $doc->createTextNode( $product->get_is_active() ? 'true' : 'false' ) );
+
+			$prod->appendChild( $sku );
+			$prod->appendChild( $name );
+			$prod->appendChild( $shopurl );
+			$prod->appendChild( $price );
+			$prod->appendChild( $currency );
+			$prod->appendChild( $description );
+			$prod->appendChild( $image );
+			$prod->appendChild( $active );
+
+			if( $product->get_category() ) {
+				$category = $doc->createElement( 'category' );
+				$category->appendChild( $doc->createTextNode( $product->get_category() ) );
+				$prod->appendChild( $category );
+			}
+
+			if( $product->get_price_discount() ) {
+				$discountedprice = $doc->createElement( 'discountedprice' );
+				$discountedprice->appendChild( $doc->createTextNode( $product->get_price_discount() ) );
+				$prod->appendChild( $discountedprice );
+			}
+
+			$root->appendChild( $prod );
+		}
+
+		return $doc->saveXML();
+	}
+
+	private function simple_xml( $products )
+	{
 		$products_xml = new SimpleXMLElement('<products/>');
 
 		foreach ($products as $product) {
 
 			if( ! $product->is_valid() ) continue;
 
+			$description = $product->get_description();
+			preg_replace(array('/\r/', '/\n/', '/&nbsp;/'), ' ', $description);
+
 			$product_xml = $products_xml->addChild('product');
-			$product_xml->addAttribute('sku', esc_attr( $product->get_sku()) );
-			$product_xml->addChild('name', esc_attr( $product->get_name()) );
-			$product_xml->addChild('shopurl', esc_attr( $product->get_permalink()) );
-			$product_xml->addChild('price', esc_attr( $product->get_price()) );
-			$product_xml->addChild('currency', esc_attr( $product->get_currency()) );
-			$product_xml->addChild('description', esc_attr( $product->get_description()) );
+			$product_xml->addAttribute('sku', esc_attr( $product->get_sku() ) );
+			$product_xml->addChild('name', esc_attr( $product->get_name() ) );
+			$product_xml->addChild('shopurl', esc_attr( $product->get_permalink() ) );
+			$product_xml->addChild('price', esc_attr( $product->get_price() ) );
+			$product_xml->addChild('currency', esc_attr( $product->get_currency() ) );
+			$product_xml->addChild('description', esc_attr( $description ) );
 			$product_xml->addChild('image', esc_attr( $product->get_image()));
 			$product_xml->addChild('active', $product->get_is_active() ? 'true' : 'false');
 
