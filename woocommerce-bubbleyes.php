@@ -11,7 +11,7 @@
  * Plugin Name:       Bubbleyes for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/bubbleyes-for-woocommerce/
  * Description:       Connect customers and web stores in a unique and dynamic way: Bubbl!
- * Version:           1.0.5
+ * Version:           1.0.6
  * Author:            Terje Lindstad
  * Author URI:        http://bubbleyes.com/
  * License:           GPL-2.0+
@@ -26,6 +26,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 	return;
 }
+
+/**
+ * Debug mode.
+ */
+define( 'WC_Bubbleyes_Debug', false );
 
 /**
  * Config.

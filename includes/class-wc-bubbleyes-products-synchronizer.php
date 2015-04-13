@@ -122,18 +122,6 @@ class WC_Bubbleyes_Products_Synchronizer
 	}
 
 	/**
-	 * Synchronize all products in a category. Update
-	 * if a product get its Bubbleyes category from
-	 * the WooCommerce category.
-	 * 
-	 * @param   mixed  $term_id
-	 */
-	public function import_products_in_category( $term_id )
-	{
-		WC_Bubbleyes_Batch_Process::import( $term_id );
-	}
-
-	/**
 	 * Synchronize all products. Created if missing
 	 * in the Bubbleyes platform, updated if existing
 	 * in both platforms, deteled if missing.
@@ -155,7 +143,16 @@ class WC_Bubbleyes_Products_Synchronizer
 	 */
 	private function to_xml( $products )
 	{
-		return class_exists( 'DOMDocument' ) ? $this->dom_xml( $products ) : $this->simple_xml( $products );
+		$xml = class_exists( 'DOMDocument' ) ? $this->dom_xml( $products ) : $this->simple_xml( $products );
+
+		if( WC_Bubbleyes_Debug ) {
+			$file = WP_PLUGIN_DIR . '/bubbleyes-for-woocommerce/products.xml';
+			$contents = file_get_contents( $file );
+			$contents .= $xml . "\n\n";
+			file_put_contents( $file, $contents );
+		}
+
+		return $xml;
 	}
 
 	private function dom_xml( $products )

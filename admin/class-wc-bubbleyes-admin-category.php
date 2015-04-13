@@ -70,8 +70,23 @@ class WC_Bubbleyes_Admin_Category
 		} else {
 			update_metadata( 'taxonomy', $term_id, '_bubbleyes_meta', $new_meta );
 		}
+		
+		$data = array(
+			'post_type' => 'product',
+			'posts_per_page' => -1,
+			'order' => 'asc',
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'product_cat',
+					'field'    => 'term_id',
+					'terms'    => $term_id
+				),
+			),
+		);
+
+		$posts = get_posts( $data );
 
 		$synchronizer = new WC_Bubbleyes_Products_Synchronizer();
-		$synchronizer->import_products_in_category( $term_id );
+		$synchronizer->import_products( $posts );
 	}
 }

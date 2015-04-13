@@ -187,6 +187,11 @@ class WC_Bubbleyes_Admin_Options
 		// Create a transient to collect failed products.
 		set_transient( 'bubbleyes_failed_products', array(), 3600 );
 
+		if( WC_Bubbleyes_Debug ) {
+			$file = WP_PLUGIN_DIR . '/bubbleyes-for-woocommerce/products.xml';
+			file_put_contents( $file, '' );
+		}
+
 		$sync = new WC_Bubbleyes_Products_Synchronizer();
 		$sync->clear_all_products();
 		$this->batch_sync();
@@ -249,20 +254,28 @@ class WC_Bubbleyes_Admin_Options
 	 */
 	public function admin_notices()
 	{
-		if ( WC_Bubbleyes_API::has_key() ) return;
-
 		$identifier = WC_Bubbleyes()->identifier();
 		$plugin_data = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'woocommerce-bubbleyes.php' );
 		$screen = get_current_screen();
 		$url = get_admin_url( null, 'admin.php?page=' . $identifier );
 
-		if ( $this->plugin_options_page == $screen->id ) return;
+		if( $this->plugin_options_page == $screen->id ) {
+			if( ! class_exists( 'DOMDocument' ) ) {
+				?><div class="update-nag">
+			        <p>
+			        	<?php _e( 'The PHP extension <b>DOMDocument</b> should be enabled for best synchronization.', $identifier ); ?>
+			        </p>
+			    </div><?php
+			}
+		}
 
-    	?><div class="update-nag">
-	        <p>
-	        	<?php echo sprintf( __( 'Visit %s to setup <strong>%s</strong>.', $identifier ), '<a href="' . $url . '">' . __( 'Bubbleyes Options', $identifier ) . '</a>', $plugin_data['Name'] ); ?>
-	        </p>
-	    </div><?php
+		if ( ! WC_Bubbleyes_API::has_key() && $this->plugin_options_page != $screen->id ) {
+	    	?><div class="update-nag">
+		        <p>
+		        	<?php echo sprintf( __( 'Visit %s to setup <strong>%s</strong>.', $identifier ), '<a href="' . $url . '">' . __( 'Bubbleyes Options', $identifier ) . '</a>', $plugin_data['Name'] ); ?>
+		        </p>
+		    </div><?php
+		}
 	}
 
 	/**

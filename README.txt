@@ -3,7 +3,7 @@ Contributors: hjvedvik
 Tags: ecommerce, e-commerce, commerce, woocommerce, woothemes, store, sales, customer, push, notification, sell, shop, shopping, share, social, bubbleyes
 Requires at least: 3.8
 Tested up to: 4.1.1
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,10 @@ Bubbleyes is a solid campaign management tool allowing online stores to view the
 * MySQL version 5.0 or greater
 
 == Changelog ==
+
+= 1.0.6 =
+* Fix - Fixed bug with categories
+* Added notice about DOMDocument
 
 = 1.0.5 =
 * Fix - Fixed XML where it did not validate in some cases while synchronizing
