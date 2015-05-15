@@ -2,8 +2,8 @@
 Contributors: hjvedvik
 Tags: ecommerce, e-commerce, commerce, woocommerce, woothemes, store, sales, customer, push, notification, sell, shop, shopping, share, social, bubbleyes
 Requires at least: 3.8
-Tested up to: 4.1.1
-Stable tag: 1.0.6
+Tested up to: 4.2.2
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,8 +23,8 @@ Newsletters are a thing of the past- Modern, price savvy end-consumers prefer re
 
 **1. Direct marketing**
 
-A higly-targeted customer is reached through individualized push notifications they’ve chosen to receive. This is a new and exciting channel for price communication! 
-Many online stores send newsletters which often are filtered as spam. Stores cannot reach all their potential customers by sending such newsletters. Several retailers are good at segmenting but just as many fail. By using Bubbleyes, you are 100% certain to reach your customers with the right marketing! 
+A higly-targeted customer is reached through individualized push notifications they’ve chosen to receive. This is a new and exciting channel for price communication!
+Many online stores send newsletters which often are filtered as spam. Stores cannot reach all their potential customers by sending such newsletters. Several retailers are good at segmenting but just as many fail. By using Bubbleyes, you are 100% certain to reach your customers with the right marketing!
 
 **2. Measurements and Analysis**
 
@@ -51,6 +51,9 @@ Bubbleyes is a solid campaign management tool allowing online stores to view the
 * MySQL version 5.0 or greater
 
 == Changelog ==
+
+= 1.0.7 =
+* Fix - Do not try to synchronize invalid products
 
 = 1.0.6 =
 * Fix - Fixed bug with categories

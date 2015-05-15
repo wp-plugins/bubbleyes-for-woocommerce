@@ -25,7 +25,7 @@
 
 					$status.html('Synchronizing...');
 					$errors.empty();
-					
+
 					batch(startAt, 'bubbleyes_batch_start');
 
 					function batch(startAt, action) {
@@ -87,7 +87,7 @@
 					$overlay.removeAttr('style');
 					stopped = true;
 				}
-				
+
 			};
 		}();
 

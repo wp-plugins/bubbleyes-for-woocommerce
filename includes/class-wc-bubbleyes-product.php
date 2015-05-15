@@ -13,14 +13,14 @@ class WC_Bubbleyes_Product
 {
 	/**
 	 * Invalid product
-	 * 
+	 *
 	 * @var  boolean
 	 */
 	private $is_valid = true;
 
 	/**
 	 * The post ID.
-	 * 
+	 *
 	 * @var  int
 	 */
 	private $post_id;
@@ -35,7 +35,7 @@ class WC_Bubbleyes_Product
 	/**
 	 * All product meta. Store the old meta data
 	 * to compare it with the new meta data.
-	 * 
+	 *
 	 * @var  array
 	 */
 	private $meta_old = array();
@@ -60,7 +60,7 @@ class WC_Bubbleyes_Product
 			set_transient( 'bubbleyes_failed_products', $failed, 3600 );
 
 			$this->is_valid = false;
-			
+
 		}
 	}
 
@@ -81,7 +81,7 @@ class WC_Bubbleyes_Product
 		$this->set_permalink( $this->product->get_permalink() );
 		$this->set_is_active( $this->product->post->post_status == 'publish' );
 		$this->set_currency( get_woocommerce_currency() );
-		
+
 		// Get it from the category or from default if category has no Bubbleyes category.
 		if( ! isset( $this->meta['category'] ) || $this->meta['category'] == 'category' ) {
 			$product_cats = wp_get_post_terms( $post_id, 'product_cat' );
@@ -98,7 +98,7 @@ class WC_Bubbleyes_Product
 			$category = $this->meta['category'] != 'default' ? $this->meta['category'] : $options['category'];
 			$this->set_category( wc_bubbleyes_category( $category ) );
 		}
-		
+
 		// Use Featured Image as thumbnail in Bubbleyes.
 		$image = wp_get_attachment_image_src( $this->product->get_image_id() );
 		if( ! empty( $image ) ) {
@@ -133,13 +133,13 @@ class WC_Bubbleyes_Product
 
 		// Let other plugins modify meta data if necessary.
 		$this->meta['Product'] = apply_filters( 'bubbleyes_product_meta', $this->meta['Product'], $this->product );
-		
+
 	}
 
 	/**
 	 * Check if this product should be synchronized
 	 * or not.
-	 * 
+	 *
 	 * @return  bool
 	 */
 	public function should_sync()
@@ -339,7 +339,7 @@ class WC_Bubbleyes_Product
 	 */
 	private function get_value( $value )
 	{
-		return isset( $this->meta['Product'][$value] ) ? $this->meta['Product'][$value] : null; 
+		return isset( $this->meta['Product'][$value] ) ? $this->meta['Product'][$value] : null;
 	}
 
 	/**

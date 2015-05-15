@@ -11,7 +11,7 @@
  * Plugin Name:       Bubbleyes for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/bubbleyes-for-woocommerce/
  * Description:       Connect customers and web stores in a unique and dynamic way: Bubbl!
- * Version:           1.0.6
+ * Version:           1.0.7
  * Author:            Terje Lindstad
  * Author URI:        http://bubbleyes.com/
  * License:           GPL-2.0+
@@ -62,7 +62,7 @@ register_activation_hook( __FILE__, array( 'WC_Bubbleyes_Activator', 'activate' 
 register_deactivation_hook( __FILE__, array( 'WC_Bubbleyes_Deactivator', 'deactivate' ) );
 
 /**
- * 
+ *
  */
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wc-bubbleyes-api.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wc-bubbleyes-product.php';
@@ -76,7 +76,7 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-wc-bubbleyes.php';
 
 /**
  * Initialize the plugin if WooCommerce is active.
- * 
+ *
  * @since    1.0.0
  */
 function WC_Bubbleyes() {

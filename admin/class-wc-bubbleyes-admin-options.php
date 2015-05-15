@@ -46,7 +46,7 @@ class WC_Bubbleyes_Admin_Options
 	/**
 	 * Register the administration menu for this
 	 * plugin into the WordPress Admin menu.
-	 * 
+	 *
 	 * @since    1.0.0
 	 */
 	public function add_options_page()
@@ -55,7 +55,7 @@ class WC_Bubbleyes_Admin_Options
 
 		$this->plugin_options_page  = add_submenu_page(
 			'woocommerce',
-			__( 'Bubbleyes', $identifier ), 
+			__( 'Bubbleyes', $identifier ),
 			__( 'Bubbleyes', $identifier ),
 			'manage_woocommerce',
 			$identifier,
@@ -96,7 +96,7 @@ class WC_Bubbleyes_Admin_Options
 	/**
 	 * Validate options and register or update
 	 * Webshop in Bubbleyes Platform.
-	 * 
+	 *
 	 * @since    1.0.0
 	 * @param    array  $options
 	 *
@@ -119,7 +119,7 @@ class WC_Bubbleyes_Admin_Options
 	/**
 	 * Bubbleyes options was updated. Check if the
 	 * API key is valid if the key has changed..
-	 * 
+	 *
 	 * @param   array  $options
 	 * @param   array  $options_old
 	 */
@@ -202,6 +202,8 @@ class WC_Bubbleyes_Admin_Options
 	 */
 	public function batch_sync()
 	{
+		@ini_set( 'display_errors', 'On' );
+
 		$sync = new WC_Bubbleyes_Products_Synchronizer();
 
 		$chunk_size = (int) $_GET['chunk_size'];
@@ -211,6 +213,9 @@ class WC_Bubbleyes_Admin_Options
 			'posts_per_page' => $chunk_size,
 			'offset' => $start_at,
 			'post_type' => 'product',
+			'post_status' => array( 'publish' ),
+			'order' => 'ASC',
+			'orderby' => 'title',
 		) );
 
 		$posts = $query->get_posts();

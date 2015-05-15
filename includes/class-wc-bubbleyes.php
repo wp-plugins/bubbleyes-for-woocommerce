@@ -31,7 +31,7 @@ final class WC_Bubbleyes
 
 	/**
 	 * Bubbleyes options.
-	 * 
+	 *
 	 * @since    1.0.0
 	 * @var      array
 	 */
@@ -69,7 +69,7 @@ final class WC_Bubbleyes
 	public function __construct()
 	{
 		$this->identifier = 'woocommerce-bubbleyes';
-		$this->version    = '1.0.6';
+		$this->version    = '1.0.7';
 
 		$default_options = array(
 			'apikey' => null,
@@ -164,7 +164,7 @@ final class WC_Bubbleyes
 	/**
 	 * Initialize the plugin and run the loader to
 	 * execute all hooks.
-	 * 
+	 *
 	 * @since    1.0.0
 	 */
 	public function initialize()
@@ -222,7 +222,7 @@ final class WC_Bubbleyes
 
 	/**
 	 * Reference to the Bubbleyes options.
-	 * 
+	 *
 	 * @since     1.0.0
 	 * @return    array
 	 */
@@ -245,7 +245,7 @@ final class WC_Bubbleyes
 
 	/**
 	 * Return an instance of this class.
-	 * 
+	 *
 	 * @since     1.0.0
 	 * @return    Bubbleyes
 	 */
